@@ -70,7 +70,12 @@ class LoginScreen extends StatelessWidget {
             children: [
               const Text(
                 "IP Geolocation System",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
+                style: TextStyle(
+                  fontSize: 28, 
+                  fontWeight: FontWeight.w900,
+                  backgroundColor: GeoColors.coral,
+                  color: Colors.black
+                ),
               ),
               const SizedBox(height: 20),
               TextField(
@@ -83,7 +88,7 @@ class LoginScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey, width: 2),
+                    borderSide: BorderSide(color: GeoColors.aqua, width: 2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   floatingLabelStyle: TextStyle(color: Colors.black),
@@ -101,7 +106,7 @@ class LoginScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey, width: 2),
+                    borderSide: BorderSide(color: GeoColors.aqua, width: 2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   floatingLabelStyle: TextStyle(color: Colors.black),
@@ -110,11 +115,11 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(Colors.white),
-                  foregroundColor: WidgetStatePropertyAll(Colors.blue),
+                  backgroundColor: WidgetStatePropertyAll(GeoColors.lime),
+                  foregroundColor: WidgetStatePropertyAll(GeoColors.grey),
                   minimumSize: WidgetStatePropertyAll(Size(200, 55)),
                   side: WidgetStatePropertyAll(
-                    BorderSide(color: Colors.blue, width: 2),
+                    BorderSide(color: GeoColors.grey, width: 2),
                   ),
                 ),
                 onPressed: () async {

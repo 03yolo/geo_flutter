@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'services/api_serv.dart';
 import 'screens/homepage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:geo_flutter/theme/colors.dart';
 
 void main() {
   runApp(const MyApp());

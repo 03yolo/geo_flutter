@@ -23,6 +23,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          selectionColor: GeoColors.aqua.withOpacity(0.3),
+        ),
         textTheme: GoogleFonts.ralewayTextTheme(),
         appBarTheme: AppBarTheme(
           titleTextStyle: GoogleFonts.raleway(

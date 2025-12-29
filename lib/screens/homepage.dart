@@ -19,11 +19,18 @@ class _HomePageState extends State<HomePage> {
   bool get isAllSelected =>
       history.isNotEmpty && selectedIps.length == history.length;
 
+  String fallback(dynamic value) {
+    if (value == null) return "No information retrieved";
+    if (value is String && value.trim().isEmpty)
+      return "No information retrieved";
+    return value.toString();
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchGeo();
+      getGeoLoc();
     });
   }
 
@@ -31,7 +38,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("IP Geolocation System"),
+        title: const Text(
+          "IP Geolocation System",
+          style: TextStyle(color: GeoColors.platinum),
+        ),
+        backgroundColor: GeoColors.grey,
+        foregroundColor: GeoColors.platinum,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -42,15 +54,27 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: ipController,
+                    cursorColor: Colors.black,
                     decoration: InputDecoration(
                       labelText: "Enter IP address",
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 1.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: GeoColors.aqua,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      floatingLabelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -59,74 +83,112 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: fetchGeo,
-                  child: const Text("Search"),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(GeoColors.lime),
+                    foregroundColor: WidgetStatePropertyAll(GeoColors.grey),
+                    side: WidgetStatePropertyAll(
+                      BorderSide(color: GeoColors.grey, width: 1.5),
+                    ),
+                  ),
+                  onPressed: getGeoLoc,
+                  child: const Text(
+                    "Search",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(GeoColors.coral),
+                    foregroundColor: WidgetStatePropertyAll(GeoColors.grey),
+                    side: WidgetStatePropertyAll(
+                      BorderSide(color: GeoColors.grey, width: 1.5),
+                    ),
+                  ),
                   onPressed: clearSearch,
-                  child: const Text("Clear"),
+                  child: const Text(
+                    "Clear",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),
 
             const SizedBox(height: 16),
-            if (geoData != null) geoInfo(),
-
-            const SizedBox(height: 12),
-            if (selectedIps.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                margin: const EdgeInsets.only(bottom: 8),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "${selectedIps.length} selected",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: deleteSelected,
-                    ),
-                  ],
-                ),
-              ),
-
-            const Divider(),
-
-            if (history.isNotEmpty)
-              CheckboxListTile(
-                title: const Text("Select All"),
-                value: isAllSelected,
-                onChanged: (checked) {
-                  setState(() {
-                    if (checked == true) {
-                      selectedIps = history.toSet();
-                    } else {
-                      selectedIps.clear();
-                    }
-                  });
-                },
-              ),
 
             Expanded(
-              child: history.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No history yet",
-                        style: TextStyle(color: Colors.grey),
+              child: ListView(
+                children: [
+                  if (geoData != null) geoInfo(),
+
+                  if (selectedIps.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                    )
-                  : historyList(),
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: GeoColors.platinum,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: GeoColors.aqua, width: 2),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "${selectedIps.length} selected",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: GeoColors.ember,
+                            ),
+                            onPressed: deleteSelected,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  if (history.isNotEmpty)
+                    CheckboxListTile(
+                      title: const Text(
+                        "Select all IP addresses",
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                      value: isAllSelected,
+                      activeColor: GeoColors.olive,
+                      onChanged: (checked) {
+                        setState(() {
+                          selectedIps = checked == true ? history.toSet() : {};
+                        });
+                      },
+                    ),
+
+                  ...history.map(
+                    (ip) => CheckboxListTile(
+                      title: Text(ip),
+                      value: selectedIps.contains(ip),
+                      activeColor: GeoColors.olive,
+                      onChanged: (checked) {
+                        setState(() {
+                          checked == true
+                              ? selectedIps.add(ip)
+                              : selectedIps.remove(ip);
+                        });
+                      },
+                      secondary: IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: () {
+                          ipController.text = ip;
+                          getGeoLoc();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -142,15 +204,15 @@ class _HomePageState extends State<HomePage> {
           margin: const EdgeInsets.symmetric(vertical: 6),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GeoColors.platinum,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.black, width: 1.5),
+            border: Border.all(color: GeoColors.grey, width: 1.5),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                child: const Icon(Icons.public, color: Colors.blue),
+                child: const Icon(Icons.public, color: GeoColors.ember),
               ),
               const SizedBox(width: 14),
               Column(
@@ -165,7 +227,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(height: 4),
-                  Text(geoData!['ip'], style: TextStyle(fontSize: 16)),
+                  Text(
+                    fallback(geoData!['ip']),
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ],
               ),
             ],
@@ -177,15 +242,15 @@ class _HomePageState extends State<HomePage> {
           margin: const EdgeInsets.symmetric(vertical: 6),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GeoColors.platinum,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.black, width: 1.5),
+            border: Border.all(color: GeoColors.grey, width: 1.5),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                child: const Icon(Icons.location_city, color: Colors.green),
+                child: const Icon(Icons.location_city, color: GeoColors.olive),
               ),
               const SizedBox(width: 14),
               Column(
@@ -200,7 +265,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(height: 4),
-                  Text(geoData!['city'], style: TextStyle(fontSize: 16)),
+                  Text(
+                    fallback(geoData!['city']),
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ],
               ),
             ],
@@ -212,15 +280,15 @@ class _HomePageState extends State<HomePage> {
           margin: const EdgeInsets.symmetric(vertical: 6),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GeoColors.platinum,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.black, width: 1.5),
+            border: Border.all(color: GeoColors.grey, width: 1.5),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                child: const Icon(Icons.map, color: Colors.orange),
+                child: const Icon(Icons.map, color: GeoColors.ember),
               ),
               const SizedBox(width: 14),
               Column(
@@ -235,7 +303,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(height: 4),
-                  Text(geoData!['region'], style: TextStyle(fontSize: 16)),
+                  Text(
+                    fallback(geoData!['region']),
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ],
               ),
             ],
@@ -247,15 +318,15 @@ class _HomePageState extends State<HomePage> {
           margin: const EdgeInsets.symmetric(vertical: 6),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GeoColors.platinum,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.black, width: 1.5),
+            border: Border.all(color: GeoColors.grey, width: 1.5),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                child: const Icon(Icons.flag, color: Colors.purple),
+                child: const Icon(Icons.flag, color: GeoColors.olive),
               ),
               const SizedBox(width: 14),
               Column(
@@ -270,7 +341,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(height: 4),
-                  Text(geoData!['country'], style: TextStyle(fontSize: 16)),
+                  Text(
+                    fallback(geoData!['country']),
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ],
               ),
             ],
@@ -282,7 +356,7 @@ class _HomePageState extends State<HomePage> {
           margin: const EdgeInsets.symmetric(vertical: 6),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GeoColors.platinum,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: Colors.black, width: 1.5),
           ),
@@ -290,7 +364,10 @@ class _HomePageState extends State<HomePage> {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                child: const Icon(Icons.local_post_office, color: Colors.red),
+                child: const Icon(
+                  Icons.local_post_office,
+                  color: GeoColors.ember,
+                ),
               ),
               const SizedBox(width: 14),
               Column(
@@ -305,7 +382,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   SizedBox(height: 4),
-                  Text(geoData!['postal'], style: TextStyle(fontSize: 16)),
+                  Text(
+                    fallback(geoData!['postal']),
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ],
               ),
             ],
@@ -327,6 +407,7 @@ class _HomePageState extends State<HomePage> {
           child: CheckboxListTile(
             title: Text(ip),
             value: selectedIps.contains(ip),
+            activeColor: GeoColors.olive,
             onChanged: (checked) {
               setState(() {
                 if (checked == true) {
@@ -340,7 +421,7 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(Icons.search),
               onPressed: () {
                 ipController.text = ip;
-                fetchGeo();
+                getGeoLoc();
               },
             ),
           ),
@@ -354,7 +435,7 @@ class _HomePageState extends State<HomePage> {
     return regex.hasMatch(ip);
   }
 
-  Future<void> fetchGeo() async {
+  Future<void> getGeoLoc() async {
     final ip = ipController.text.trim();
 
     if (ip.isNotEmpty && !isValidIP(ip)) {
@@ -378,7 +459,7 @@ class _HomePageState extends State<HomePage> {
 
   void clearSearch() {
     ipController.clear();
-    fetchGeo();
+    getGeoLoc();
   }
 
   void deleteSelected() {

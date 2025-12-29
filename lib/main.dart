@@ -22,9 +22,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        textTheme: GoogleFonts.interTextTheme(),
+        textTheme: GoogleFonts.ralewayTextTheme(),
         appBarTheme: AppBarTheme(
-          titleTextStyle: GoogleFonts.inter(
+          titleTextStyle: GoogleFonts.raleway(
             fontSize: 20,
             fontWeight: FontWeight.w700,
             color: Colors.black,
@@ -74,16 +74,48 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 20),
               TextField(
                 controller: emailController,
-                decoration: const InputDecoration(labelText: "Email"),
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                  labelText: "Email Address",
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueGrey, width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
+                ),
               ),
               const SizedBox(height: 10),
               TextField(
                 controller: passwordController,
+                cursorColor: Colors.black,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: "Password"),
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueGrey, width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Colors.white),
+                  foregroundColor: WidgetStatePropertyAll(Colors.blue),
+                  minimumSize: WidgetStatePropertyAll(Size(200, 55)),
+                  side: WidgetStatePropertyAll(
+                    BorderSide(color: Colors.blue, width: 2),
+                  ),
+                ),
                 onPressed: () async {
                   final token = await ApiService.login(
                     emailController.text,
@@ -95,7 +127,14 @@ class LoginScreen extends StatelessWidget {
                   }
                 },
 
-                child: const Text("Login"),
+                child: const Text(
+                  "Login",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
               ),
             ],
           ),

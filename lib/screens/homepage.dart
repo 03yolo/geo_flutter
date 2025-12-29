@@ -35,35 +35,44 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: widget.onLogout,
-            tooltip: "Logout",
           ),
         ],
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: ipController,
-              decoration: const InputDecoration(labelText: "Enter IP address"),
-            ),
-            const SizedBox(height: 10),
             Row(
               children: [
+                Expanded(
+                  child: TextField(
+                    controller: ipController,
+                    decoration: InputDecoration(
+                      labelText: "Enter IP address",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: fetchGeo,
                   child: const Text("Search"),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
+                const SizedBox(width: 8),
+                OutlinedButton(
                   onPressed: clearSearch,
                   child: const Text("Clear"),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 16),
             if (geoData != null) geoInfo(),
+
+            const SizedBox(height: 12),
             if (selectedIps.isNotEmpty)
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -73,7 +82,8 @@ class _HomePageState extends State<HomePage> {
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue.shade200),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,6 +101,7 @@ class _HomePageState extends State<HomePage> {
               ),
 
             const Divider(),
+
             if (history.isNotEmpty)
               CheckboxListTile(
                 title: const Text("Select All"),
@@ -106,7 +117,16 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
 
-            historyList(),
+            Expanded(
+              child: history.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No history yet",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  : historyList(),
+            ),
           ],
         ),
       ),
@@ -115,50 +135,216 @@ class _HomePageState extends State<HomePage> {
 
   Widget geoInfo() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("IP: ${geoData!['ip']}"),
-        Text("City: ${geoData!['city']}"),
-        Text("Region: ${geoData!['region']}"),
-        Text("Country: ${geoData!['country']}"),
-        Text("Postal: ${geoData!['postal']}"),
+        // IP ADDRESS
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.black, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: const Icon(Icons.public, color: Colors.blue),
+              ),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "IP Address",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(geoData!['ip'], style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // CITY
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.black, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: const Icon(Icons.location_city, color: Colors.green),
+              ),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "City",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(geoData!['city'], style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // REGION
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.black, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: const Icon(Icons.map, color: Colors.orange),
+              ),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Region",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(geoData!['region'], style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // COUNTRY
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.black, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: const Icon(Icons.flag, color: Colors.purple),
+              ),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Country",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(geoData!['country'], style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // POSTAL
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.black, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: const Icon(Icons.local_post_office, color: Colors.red),
+              ),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Postal Code",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(geoData!['postal'], style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
   Widget historyList() {
-    return Expanded(
-      child: ListView(
-        children: history.map((ip) {
-          return GestureDetector(
-            onLongPress: () {
+    return ListView(
+      children: history.map((ip) {
+        return GestureDetector(
+          onLongPress: () {
+            setState(() {
+              selectedIps.add(ip);
+            });
+          },
+          child: CheckboxListTile(
+            title: Text(ip),
+            value: selectedIps.contains(ip),
+            onChanged: (checked) {
               setState(() {
-                selectedIps.add(ip);
+                if (checked == true) {
+                  selectedIps.add(ip);
+                } else {
+                  selectedIps.remove(ip);
+                }
               });
             },
-            child: CheckboxListTile(
-              title: Text(ip),
-              value: selectedIps.contains(ip),
-              onChanged: (checked) {
-                setState(() {
-                  if (checked == true) {
-                    selectedIps.add(ip);
-                  } else {
-                    selectedIps.remove(ip);
-                  }
-                });
+            secondary: IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                ipController.text = ip;
+                fetchGeo();
               },
-              secondary: IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  ipController.text = ip;
-                  fetchGeo();
-                },
-              ),
             ),
-          );
-        }).toList(),
-      ),
+          ),
+        );
+      }).toList(),
     );
   }
 

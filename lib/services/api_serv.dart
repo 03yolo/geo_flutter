@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = "http://localhost:8000/api";
+  static const String baseUrl = "https://geo-api-five.vercel.app";
 
   static Future<String?> login(String email, String password) async {
     final response = await http.post(
